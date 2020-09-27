@@ -41,14 +41,12 @@ def reply(tickerSymbol):
     return replyString
 
 
-def runBot(r):
+def runBot(r, comments_replied_to):
     print("Obtaining 25 comments...")
-
-    comments_replied_to = []
 
     subreddit = r.subreddit("testBot2704")
     for comment in subreddit.comments(limit=15):
-        if keyphrase in comment.body and comment.id not in comments_replied_to:
+        if keyphrase in comment.body and comment.id not in comments_replied_to and comment.author != r.user.me():
             print("1")
             tickerSymbol = comment.body.replace(keyphrase, "")
             print("2")
@@ -59,12 +57,28 @@ def runBot(r):
 
             comments_replied_to.append(comment.id)
 
+            with open("commentedTo.txt", "a") as f:
+                f.write(comment.id+"\n")
+
     print(comments_replied_to)
 
     time.sleep(10)
 
 
+def getSavedComments():
+    if not os.path.isfile("commentedTo.txt"):
+        comments_replied_to = []
+    else:
+        with open("commentedTo.txt", "r") as f:
+            comments_replied_to = f.read()
+            comments_replied_to = comments_replied_to.split("\n")
+            comments_replied_to = filter(None, comments_replied_to)
+    return comments_replied_to
+
+
 r = botLogin()
 
+comments_replied_to = getSavedComments()
+
 while True:
-    runBot(r)
+    runBot(r, comments_replied_to)
