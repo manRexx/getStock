@@ -13,8 +13,8 @@ def botLogin():
     print("Logging in...")
     r = praw.Reddit(username=os.environ.get("redditBot_ID"),
                     password=os.environ.get("redditBot_pass"),
-                    client_id=config.client_id,
-                    client_secret=config.client_secret,
+                    client_id="DR18zicVBiDXcQ",
+                    client_secret="QJwZCpL9uMgrqTsInfnMtIYI1pw",
                     user_agent=config.user_agent
                     )
     print("Logged in...")
@@ -43,20 +43,28 @@ def reply(tickerSymbol):
 
 def runBot(r):
     print("Obtaining 25 comments...")
+
+    comments_replied_to = []
+
     subreddit = r.subreddit("testBot2704")
-    for comment in subreddit.comments(limit=25):
-        if keyphrase in comment.body:
+    for comment in subreddit.comments(limit=15):
+        if keyphrase in comment.body and comment.id not in comments_replied_to:
+            print("1")
             tickerSymbol = comment.body.replace(keyphrase, "")
-            try:
-                reply = reply(tickerSymbol)
-                comment.reply(reply)
-                print("Posted")
-            except:
-                print("Not Posted.....Too frequent")
+            print("2")
+            answer = reply(tickerSymbol)
+            print("3")
+            comment.reply(answer)
+            print("Posted")
+
+            comments_replied_to.append(comment.id)
+
+    print(comments_replied_to)
 
     time.sleep(10)
 
 
+r = botLogin()
+
 while True:
-    r = botLogin()
     runBot(r)
