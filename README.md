@@ -9,3 +9,4 @@ This bot gives information of stocks which a redditor ask as a comment!!
 pls_gv_stock <ticker symbol of company>
 
 e.g - pls_gv_stock GOOG => This command gives stock information of Google 
+      pls_gv_stock TSLA => This command gives stock information of Tesla  
